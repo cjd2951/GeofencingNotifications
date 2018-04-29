@@ -1,8 +1,11 @@
 package com.whitlatch.kotlingeofencealexandchris
 
 import android.Manifest
+import android.app.AlertDialog
+import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -14,10 +17,9 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.view.*
 import android.widget.TextView
+import android.widget.Toast
 
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -124,11 +126,13 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.geofence -> {
-                startGeofence()
+                showDialog()
+                //startGeofence()
                 return true
             }
             R.id.clear -> {
-                clearGeofence()
+                showClearDialog()
+                //clearGeofence()
                 return true
             }
         }
@@ -442,5 +446,53 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
         private val GEOFENCE_REQ_ID = "My Geofence"
         private val GEOFENCE_RADIUS = 500.0f // in meters
     }
+
+    fun showDialog(){
+        var builder :AlertDialog.Builder = AlertDialog.Builder(this)
+        var inflater: LayoutInflater = layoutInflater
+        var view : View = inflater.inflate(R.layout.dialog_box,null)
+        builder.setView(view)
+        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                Toast.makeText(this@MainActivity, "Geofence creation canceled",Toast.LENGTH_LONG).show()
+                dialog!!.dismiss()
+
+            }
+        })
+
+        builder.setPositiveButton("Create", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                Toast.makeText(this@MainActivity, "Geofence creation successful",Toast.LENGTH_LONG).show()
+                dialog!!.dismiss()
+                startGeofence()
+            }
+        })
+        var dialog: Dialog = builder.create()
+        dialog.show()
+    }
+
+    fun showClearDialog(){
+        var builder :AlertDialog.Builder = AlertDialog.Builder(this)
+        var inflater: LayoutInflater = layoutInflater
+        var view : View = inflater.inflate(R.layout.dialog_box_clear,null)
+        builder.setView(view)
+        builder.setNegativeButton("No", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                Toast.makeText(this@MainActivity, "Geofence Clear Canceled",Toast.LENGTH_LONG).show()
+                dialog!!.dismiss()
+            }
+        })
+
+        builder.setPositiveButton("Yes", object : DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                Toast.makeText(this@MainActivity, "Removing All Created Geofences",Toast.LENGTH_LONG).show()
+                dialog!!.dismiss()
+                clearGeofence()
+            }
+        })
+        var dialog: Dialog = builder.create()
+        dialog.show()
+    }
+
 
 }
