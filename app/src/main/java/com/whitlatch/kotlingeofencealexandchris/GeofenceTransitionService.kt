@@ -17,12 +17,20 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 
 import java.util.ArrayList
+import android.app.NotificationChannel
+import android.os.Build
+
+
 /**
  * Created by alexw on 4/28/2018.
  */
 
 
-class GeofenceTrasitionService : IntentService(GeofenceTrasitionService::class.java.simpleName) {
+class GeofenceTransitionService : IntentService(GeofenceTransitionService::class.java.simpleName) {
+
+    override fun onCreate() {
+        super.onCreate()
+    }
 
     override fun onHandleIntent(intent: Intent?) {
         Log.i("Alex msg", "onHandleIntent() from TransitionService")
@@ -65,6 +73,7 @@ class GeofenceTrasitionService : IntentService(GeofenceTrasitionService::class.j
 
     private fun sendNotification(msg: String) {
         Log.i(TAG, "sendNotification: " + msg)
+        val channelId = "geo_notify_001"
 
         // Intent to start the main Activity
         val notificationIntent = MainActivity.makeNotificationIntent(
@@ -79,15 +88,23 @@ class GeofenceTrasitionService : IntentService(GeofenceTrasitionService::class.j
 
         // Creating and sending Notification
         val notificatioMng = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificatioMng.notify(
-                GEOFENCE_NOTIFICATION_ID,
-                createNotification(msg, notificationPendingIntent))
+        var notificationBuilder = NotificationCompat.Builder(this)
+
+        val channel: NotificationChannel?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationBuilder = NotificationCompat.Builder(this, channelId)
+            channel = NotificationChannel(channelId, "View Geofence Notifications", NotificationManager.IMPORTANCE_DEFAULT)
+            notificatioMng.createNotificationChannel(channel)
+        }
+
+        val notification = createNotification(msg, notificationPendingIntent, notificatioMng, notificationBuilder)
+
+        notificatioMng.notify(GEOFENCE_NOTIFICATION_ID, notification)
 
     }
 
     // Create notification
-    private fun createNotification(msg: String, notificationPendingIntent: PendingIntent): Notification {
-        val notificationBuilder = NotificationCompat.Builder(this)
+    private fun createNotification(msg: String, notificationPendingIntent: PendingIntent, notificationManager: NotificationManager, notificationBuilder: NotificationCompat.Builder): Notification {
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_action_location)
                 .setColor(Color.RED)
@@ -101,7 +118,7 @@ class GeofenceTrasitionService : IntentService(GeofenceTrasitionService::class.j
 
     companion object {
 
-        private val TAG = GeofenceTrasitionService::class.java.simpleName
+        private val TAG = GeofenceTransitionService::class.java.simpleName
 
         val GEOFENCE_NOTIFICATION_ID = 0
 

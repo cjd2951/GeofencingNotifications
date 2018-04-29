@@ -341,7 +341,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
         if (geoFencePendingIntent != null)
             return geoFencePendingIntent
 
-        val intent = Intent(this, GeofenceTrasitionService::class.java)
+        val intent = Intent(this, GeofenceTransitionService::class.java)
         return PendingIntent.getService(
                 this, GEOFENCE_REQ_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
