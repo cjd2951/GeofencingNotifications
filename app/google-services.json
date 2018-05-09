@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "905098320281",
+    "firebase_url": "https://kotlingeofencealexandchris.firebaseio.com",
+    "project_id": "kotlingeofencealexandchris",
+    "storage_bucket": "kotlingeofencealexandchris.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905098320281:android:c50e628cdaad5adc",
+        "android_client_info": {
+          "package_name": "com.whitlatch.kotlingeofencealexandchris"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "905098320281-6p0iup5q9v3ci84r8lml27ecdlq1oh6b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.whitlatch.kotlingeofencealexandchris",
+            "certificate_hash": "51755901ff94ba98e4b2c2acbd7b9a846983cc3c"
+          }
+        },
+        {
+          "client_id": "905098320281-ujc0pkiol1mjg5l1cvo14f3au8rbcnv7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDrxpW4bVu_xKSG7WMt_zJnd6hfg7vtJo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "905098320281-ujc0pkiol1mjg5l1cvo14f3au8rbcnv7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

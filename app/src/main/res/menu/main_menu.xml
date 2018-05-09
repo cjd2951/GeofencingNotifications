@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
     <item
-        android:id="@+id/geofence"
-        android:title="Create Geofence on Marker"
+        android:id="@+id/manageFence"
+        android:title="Manage Geofences"
         app:showAsAction="never" />
     <item
-        android:id="@+id/clear"
-        android:title="Clear All Geofences"
+        android:id="@+id/createFence"
+        android:title="Create A Geofence"
         app:showAsAction="never" />
 </menu>

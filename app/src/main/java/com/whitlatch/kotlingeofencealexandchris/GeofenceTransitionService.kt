@@ -19,6 +19,7 @@ import com.google.android.gms.location.GeofencingEvent
 import java.util.ArrayList
 import android.app.NotificationChannel
 import android.os.Build
+import com.google.gson.Gson
 
 
 /**
@@ -27,13 +28,14 @@ import android.os.Build
 
 
 class GeofenceTransitionService : IntentService(GeofenceTransitionService::class.java.simpleName) {
+    private val GEOFENCE_JSON_KEY = "GEOFENCE_JSON"
+
 
     override fun onCreate() {
         super.onCreate()
     }
 
     override fun onHandleIntent(intent: Intent?) {
-        Log.i("Alex msg", "onHandleIntent() from TransitionService")
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
         // Handling errors
         if (geofencingEvent.hasError()) {
@@ -41,6 +43,12 @@ class GeofenceTransitionService : IntentService(GeofenceTransitionService::class
             Log.e(TAG, errorMsg)
             return
         }
+
+        val fenceString = intent?.getStringExtra(GEOFENCE_JSON_KEY)
+
+        val gson = Gson()
+
+        val fence = gson.fromJson(fenceString, Fence::class.java)
 
         val geoFenceTransition = geofencingEvent.geofenceTransition
         // Check if the transition type is of interest
@@ -51,7 +59,7 @@ class GeofenceTransitionService : IntentService(GeofenceTransitionService::class
             val geofenceTransitionDetails = getGeofenceTrasitionDetails(geoFenceTransition, triggeringGeofences)
 
             // Send notification details as a String
-            sendNotification(geofenceTransitionDetails)
+            sendNotification(geofenceTransitionDetails, fence)
         }
     }
 
@@ -63,15 +71,15 @@ class GeofenceTransitionService : IntentService(GeofenceTransitionService::class
             triggeringGeofencesList.add(geofence.requestId)
         }
 
-        var status: String? = null
-        if (geoFenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER)
-            status = "Entering "
-        else if (geoFenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
-            status = "Exiting "
+        var status: String? = "Geofence Reminder - "
+//        if (geoFenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER)
+//            status = "Entering "
+//        else if (geoFenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT)
+//            status = "Exiting "
         return status!! + TextUtils.join(", ", triggeringGeofencesList)
     }
 
-    private fun sendNotification(msg: String) {
+    private fun sendNotification(msg: String, fence: Fence) {
         Log.i(TAG, "sendNotification: " + msg)
         val channelId = "geo_notify_001"
 
@@ -97,19 +105,19 @@ class GeofenceTransitionService : IntentService(GeofenceTransitionService::class
             notificatioMng.createNotificationChannel(channel)
         }
 
-        val notification = createNotification(msg, notificationPendingIntent, notificatioMng, notificationBuilder)
+        val notification = createNotification(msg, notificationPendingIntent, notificatioMng, notificationBuilder, fence)
 
         notificatioMng.notify(GEOFENCE_NOTIFICATION_ID, notification)
 
     }
 
     // Create notification
-    private fun createNotification(msg: String, notificationPendingIntent: PendingIntent, notificationManager: NotificationManager, notificationBuilder: NotificationCompat.Builder): Notification {
+    private fun createNotification(msg: String, notificationPendingIntent: PendingIntent, notificationManager: NotificationManager, notificationBuilder: NotificationCompat.Builder, fence: Fence): Notification {
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_action_location)
                 .setColor(Color.RED)
                 .setContentTitle(msg)
-                .setContentText("Geofence Notification!")
+                .setContentText(fence.notificationText)
                 .setContentIntent(notificationPendingIntent)
                 .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_VIBRATE or Notification.DEFAULT_SOUND)
                 .setAutoCancel(true)
